@@ -2,20 +2,31 @@ package com.taskboard.service;
 
 import com.taskboard.dto.CreateTaskRequest;
 import com.taskboard.exception.TaskNotFoundException;
-import com.taskboard.model.*;
+import com.taskboard.model.Bug;
+import com.taskboard.model.Epic;
+import com.taskboard.model.Feature;
+import com.taskboard.model.Priority;
+import com.taskboard.model.Severity;
+import com.taskboard.model.Subtask;
+import com.taskboard.model.Task;
+import com.taskboard.model.TaskStatus;
 import com.taskboard.repository.TaskRepository;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @Service
 public class TaskService {
 
     private final TaskRepository taskRepository;
+    private final SimpMessageSendingOperations messagingTemplate;
 
-    public TaskService(TaskRepository taskRepository) {
+    public TaskService(TaskRepository taskRepository, SimpMessageSendingOperations messagingTemplate) {
         this.taskRepository = taskRepository;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @Transactional
@@ -30,7 +41,9 @@ public class TaskService {
         task.setDescription(request.description());
         task.setDueDate(request.dueDate());
 
-        return taskRepository.save(task);
+        Task saved = taskRepository.save(task);
+        broadcastChange("CREATED", saved.getId());
+        return saved;
     }
 
     public List<Task> getAllTasks() {
@@ -45,7 +58,9 @@ public class TaskService {
     public Task updateStatus(Long id, TaskStatus status) {
         Task task = getTask(id);
         task.setStatus(status);
-        return taskRepository.save(task);
+        Task saved = taskRepository.save(task);
+        broadcastChange("STATUS_UPDATED", saved.getId());
+        return saved;
     }
 
     @Transactional
@@ -53,7 +68,9 @@ public class TaskService {
         if (!taskRepository.existsById(id)) {
             throw new TaskNotFoundException(id);
         }
+
         taskRepository.deleteById(id);
+        broadcastChange("DELETED", id);
     }
 
     private Bug createBug(CreateTaskRequest request) {
@@ -88,5 +105,12 @@ public class TaskService {
         }
 
         return new Subtask(request.title(), parentTask, request.estimatedMinutes());
+    }
+
+    private void broadcastChange(String event, Long taskId) {
+        LinkedHashMap<String, Object> payload = new LinkedHashMap<>();
+        payload.put("event", event);
+        payload.put("taskId", taskId);
+        messagingTemplate.convertAndSend("/topic/tasks", payload);
     }
 }
