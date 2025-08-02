@@ -1,0 +1,23 @@
+:root {
+  font-family: "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  color: #1f1f1f;
+  background: radial-gradient(circle at top left, #f7ffe5 0%, #fff7f0 60%, #f4fbff 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.header h1 {
+  margin-bottom: 4px;
+}
