@@ -21,3 +21,58 @@ body {
 .header h1 {
   margin-bottom: 4px;
 }
+
+.create-row {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.create-row input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #dadada;
+}
+
+.create-row button {
+  border: 0;
+  border-radius: 8px;
+  background: #131313;
+  color: white;
+  padding: 10px 14px;
+}
+
+.error {
+  color: #a10000;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.column {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid #ececec;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 900px) {
+  .board {
+    grid-template-columns: 1fr;
+  }
+}
