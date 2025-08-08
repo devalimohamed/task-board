@@ -1,3 +1,5 @@
+import { Client } from "@stomp/stompjs";
+import SockJS from "sockjs-client";
 import { useEffect, useMemo, useState } from "react";
 import { createFeature, getTasks } from "./api";
 import { Task } from "./types";
@@ -40,13 +42,30 @@ function App() {
 
   useEffect(() => {
     load();
+
+    const client = new Client({
+      webSocketFactory: () => new SockJS("http://localhost:8080/ws"),
+      reconnectDelay: 5000
+    });
+
+    client.onConnect = () => {
+      client.subscribe("/topic/tasks", () => {
+        load();
+      });
+    };
+
+    client.activate();
+
+    return () => {
+      client.deactivate();
+    };
   }, []);
 
   return (
     <main className="page">
       <header className="header">
         <h1>Task Board</h1>
-        <p>Simple status view</p>
+        <p>End-to-end tutorial workspace</p>
       </header>
 
       <section className="create-row">
