@@ -11,3 +11,10 @@ Small full-stack task board project with Spring Boot, React, WebSocket updates, 
 ## Local run
 - Backend: `cd backend && mvn spring-boot:run`
 - Frontend: `cd frontend && npm install && npm run dev`
+
+## Tests
+- Unit/integration: `cd backend && mvn test`
+- BDD: `cd backend && mvn -Dtest=CucumberIT test`
+
+## Containers
+- `docker compose up --build`
