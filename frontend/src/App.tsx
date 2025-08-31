@@ -65,7 +65,7 @@ function App() {
     <main className="page">
       <header className="header">
         <h1>Task Board</h1>
-        <p>End-to-end tutorial workspace</p>
+        <p>Realtime collaborative board</p>
       </header>
 
       <section className="create-row">
